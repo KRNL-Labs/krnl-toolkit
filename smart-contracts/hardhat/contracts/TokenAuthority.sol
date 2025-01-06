@@ -23,16 +23,19 @@ contract TokenAuthority is Ownable {
         bool isValidated;
         bool opinion;
         string opinionDetails;
+        string err;
     }
-    
+
     mapping(address => bool) private whitelist; // krnlNodePubKey to bool
     mapping(bytes32 => bool) private runtimeDigests; // runtimeDigest to bool
     mapping(uint256 => bool) private kernels; // kernelId to bool
-    
+
     constructor(address initialOwner) Ownable(initialOwner) {
         signingKeypair = _generateKey();
         accessKeypair = _generateKey();
+        
         kernels[337] = true;
+
         whitelist[address(0xc770EAc29244C1F88E14a61a6B99d184bfAe93f5)] = true;
         runtimeDigests[
             0x876924e18dd46dd3cbcad570a87137bbd828a7d0f3cad309f78ad2c9402eeeb7
@@ -44,55 +47,49 @@ contract TokenAuthority is Ownable {
             bytes32 entryId,
             bytes memory accessToken,
             bytes32 runtimeDigest,
-            bytes memory runtimeDigestSignature
-        ) = abi.decode(auth, (bytes32, bytes, bytes32, bytes));
-        
+            bytes memory runtimeDigestSignature,
+            uint256 nonce,
+            uint256 blockTimeStamp,
+            bytes memory authSignature
+        ) = abi.decode(
+                auth,
+                (bytes32, bytes, bytes32, bytes, uint256, uint256, bytes)
+            );
         require(_verifyAccessToken(entryId, accessToken));
         _;
     }
-
     modifier onlyValidated(bytes calldata executionPlan) {
         require(_verifyExecutionPlan(executionPlan));
         _;
     }
-
     modifier onlyAllowedKernel(uint256 kernelId) {
         require(kernels[kernelId]);
         _;
     }
 
-    struct IdentificationWrapper {
-        Identification[] identifications;
-    }
-    struct Identification {
-        string category;
-        string description;
-        string name;
-        string url;
-    }
-   
-    function _validateExecution(bytes calldata executionPlan)
-        external
-        view
-        returns (bytes memory)
-    {
+
+    function _validateExecution(
+        bytes calldata executionPlan
+    ) external view returns (bytes memory) {
         Execution[] memory _executions = abi.decode(
             executionPlan,
             (Execution[])
         );
 
         for (uint256 i = 0; i < _executions.length; i++) {
-            // kernel id 337
             if (_executions[i].kernelId == 337) {
                 uint256 result = abi.decode(_executions[i].result, (uint256));
                 if (result > 0) {
-                    _executions[i].opinion = true;
-                    _executions[i].opinionDetails = "All good";
                     _executions[i].isValidated = true;
+                    _executions[i].opinion = true;
+                } else {
+                    _executions[i].isValidated = false;
+                    _executions[i].opinion = false;
                 }
             }
-        }
 
+        }
+        
         return abi.encode(_executions);
     }
 
@@ -106,11 +103,10 @@ contract TokenAuthority is Ownable {
         return Keypair(pubKey, privKey);
     }
 
-    function _verifyAccessToken(bytes32 entryId, bytes memory accessToken)
-        private
-        view
-        returns (bool)
-    {
+    function _verifyAccessToken(
+        bytes32 entryId,
+        bytes memory accessToken
+    ) private view returns (bool) {
         bytes memory digest = abi.encodePacked(keccak256(abi.encode(entryId)));
         return
             Sapphire.verify(
@@ -133,11 +129,9 @@ contract TokenAuthority is Ownable {
         return whitelist[recoverPubKeyAddr];
     }
 
-    function _verifyExecutionPlan(bytes calldata executionPlan)
-        private
-        pure
-        returns (bool)
-    {
+    function _verifyExecutionPlan(
+        bytes calldata executionPlan
+    ) private pure returns (bool) {
         Execution[] memory executions = abi.decode(
             executionPlan,
             (Execution[])
@@ -150,11 +144,9 @@ contract TokenAuthority is Ownable {
         return true;
     }
 
-    function _getFinalOpinion(bytes calldata executionPlan)
-        private
-        pure
-        returns (bool)
-    {
+    function _getFinalOpinion(
+        bytes calldata executionPlan
+    ) private pure returns (bool) {
         Execution[] memory executions = abi.decode(
             executionPlan,
             (Execution[])
@@ -167,17 +159,16 @@ contract TokenAuthority is Ownable {
         return true;
     }
 
-    function setSigningKeypair(bytes calldata pubKey, bytes calldata privKey)
-        external
-        onlyOwner
-    {
+    function setSigningKeypair(
+        bytes calldata pubKey,
+        bytes calldata privKey
+    ) external onlyOwner {
         signingKeypair = Keypair(pubKey, privKey);
     }
 
-    function setSigningKeypairRetrievalPassword(string calldata _password)
-        external
-        onlyOwner
-    {
+    function setSigningKeypairRetrievalPassword(
+        string calldata _password
+    ) external onlyOwner {
         signingKeypairRetrievalPassword = keccak256(
             abi.encodePacked(_password)
         );
@@ -193,38 +184,37 @@ contract TokenAuthority is Ownable {
         return (signingKeypair.pubKey, signingKeypairAddress);
     }
 
-    function getSigningKeypairPrivateKey(string calldata _password)
-        external
-        view
-        onlyOwner
-        returns (bytes memory)
-    {
+    function getSigningKeypairPrivateKey(
+        string calldata _password
+    ) external view onlyOwner returns (bytes memory) {
         require(
             signingKeypairRetrievalPassword ==
                 keccak256(abi.encodePacked(_password))
         );
         return signingKeypair.privKey;
     }
-    function setWhitelist(address krnlNodePubKey, bool allowed)
-        external
-        onlyOwner
-    {
+
+    function setWhitelist(
+        address krnlNodePubKey,
+        bool allowed
+    ) external onlyOwner {
         whitelist[krnlNodePubKey] = allowed;
     }
-    function setRuntimeDigest(bytes32 runtimeDigest, bool allowed)
-        external
-        onlyOwner
-    {
+
+    function setRuntimeDigest(
+        bytes32 runtimeDigest,
+        bool allowed
+    ) external onlyOwner {
         runtimeDigests[runtimeDigest] = allowed;
     }
+
     function setKernel(uint256 kernelId, bool allowed) external onlyOwner {
         kernels[kernelId] = allowed;
     }
-    function registerdApp(bytes32 entryId)
-        external
-        view
-        returns (bytes memory)
-    {
+
+    function registerdApp(
+        bytes32 entryId
+    ) external view returns (bytes memory) {
         bytes memory digest = abi.encodePacked(keccak256(abi.encode(entryId)));
         bytes memory accessToken = Sapphire.sign(
             Sapphire.SigningAlg.Secp256k1PrehashedKeccak256,
@@ -234,21 +224,19 @@ contract TokenAuthority is Ownable {
         );
         return accessToken;
     }
-    function isKernelAllowed(bytes calldata auth, uint256 kernelId)
-        external
-        view
-        onlyAuthorized(auth)
-        returns (bool)
-    {
+
+    function isKernelAllowed(
+        bytes calldata auth,
+        uint256 kernelId
+    ) external view onlyAuthorized(auth) returns (bool) {
         return kernels[kernelId];
     }
+
     // example use case: only give 'true' opinion when all kernels are executed with expected results and proofs
-    function getOpinion(bytes calldata auth, bytes calldata executionPlan)
-        external
-        view
-        onlyAuthorized(auth)
-        returns (bytes memory)
-    {
+    function getOpinion(
+        bytes calldata auth,
+        bytes calldata executionPlan
+    ) external view onlyAuthorized(auth) returns (bytes memory) {
         try this._validateExecution(executionPlan) returns (
             bytes memory result
         ) {
@@ -257,6 +245,7 @@ contract TokenAuthority is Ownable {
             return executionPlan;
         }
     }
+
     function sign(
         bytes calldata auth,
         address senderAddress,
@@ -269,21 +258,28 @@ contract TokenAuthority is Ownable {
         view
         onlyValidated(executionPlan)
         onlyAuthorized(auth)
-        returns (
-            bytes memory,
-            bytes32,
-            bytes memory,
-            bytes32,
-            bool
-        )
+        returns (bytes memory, bytes32, bytes memory, bool)
     {
+        (
+            bytes32 id,
+            bytes memory accessToken,
+            bytes32 runtimeDigest,
+            bytes memory runtimeDigestSignature,
+            uint256 nonce,
+            uint256 blockTimeStamp,
+            bytes memory authSignature // id, accessToken, runtimeDigest, runtimeDigestSignature, nonce, blockTimeStamp, authSignature
+        ) = abi.decode(
+                auth,
+                (bytes32, bytes, bytes32, bytes, uint256, uint256, bytes)
+            );
+        // Compute kernelResponsesDigest
         bytes32 kernelResponsesDigest = keccak256(
-            abi.encode(kernelResponses, senderAddress)
+            abi.encodePacked(kernelResponses, senderAddress)
         );
         bytes memory kernelResponsesSignature = Sapphire.sign(
             Sapphire.SigningAlg.Secp256k1PrehashedKeccak256,
-            abi.encodePacked(signingKeypair.privKey),
-            abi.encode(kernelResponsesDigest),
+            signingKeypair.privKey,
+            abi.encodePacked(kernelResponsesDigest),
             ""
         );
         (, SignatureRSV memory kernelResponsesRSV) = EthereumUtils
@@ -297,41 +293,33 @@ contract TokenAuthority is Ownable {
             kernelResponsesRSV.s,
             uint8(kernelResponsesRSV.v)
         );
-        
-        bytes32 functionParamsDigest = keccak256(abi.encode(functionParams));
+        bytes32 functionParamsDigest = keccak256(functionParams);
+        // Compute kernelParamsDigest
         bytes32 kernelParamsDigest = keccak256(
-            abi.encode(kernelParams, senderAddress)
+            abi.encodePacked(kernelParams, senderAddress)
         );
-        
-        bytes32 nonce = bytes32(Sapphire.randomBytes(32, ""));
-        
         bool finalOpinion = _getFinalOpinion(executionPlan);
-        
-        bytes memory dataDigest = abi.encodePacked(
-            keccak256(
-                abi.encode(
-                    functionParamsDigest,
-                    kernelParamsDigest,
-                    senderAddress,
-                    nonce,
-                    finalOpinion
-                )
+        // Compute dataDigest
+        bytes32 dataDigest = keccak256(
+            abi.encodePacked(
+                functionParamsDigest,
+                kernelParamsDigest,
+                senderAddress,
+                nonce,
+                finalOpinion
             )
         );
-        
         bytes memory signature = Sapphire.sign(
             Sapphire.SigningAlg.Secp256k1PrehashedKeccak256,
             signingKeypair.privKey,
-            dataDigest,
+            abi.encodePacked(dataDigest),
             ""
         );
-        
         (, SignatureRSV memory rsv) = EthereumUtils.toEthereumSignature(
             signingKeypair.pubKey,
-            bytes32(dataDigest),
+            dataDigest,
             signature
         );
-        
         bytes memory signatureToken = abi.encodePacked(
             rsv.r,
             rsv.s,
@@ -341,7 +329,6 @@ contract TokenAuthority is Ownable {
             kernelResponsesSignatureEth,
             kernelParamsDigest,
             signatureToken,
-            nonce,
             finalOpinion
         );
     }

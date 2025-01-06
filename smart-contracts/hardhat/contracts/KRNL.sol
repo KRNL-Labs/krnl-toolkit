@@ -5,6 +5,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
+// Struct to group the parameters
 struct KrnlPayload {
     bytes auth;
     bytes kernelResponses;
@@ -14,6 +15,7 @@ struct KrnlPayload {
 struct KernelParameter {
     uint8 resolverType;
     bytes parameters;
+    string err;
 }
 
 struct KernelResponse {
@@ -22,6 +24,7 @@ struct KernelResponse {
     string err;
 }
 
+// Draft Version
 contract KRNL is Ownable {
     error UnauthorizedTransaction();
 
@@ -35,6 +38,7 @@ contract KRNL is Ownable {
         if (!_isAuthorized(krnlPayload, params)) {
             revert UnauthorizedTransaction();
         }
+
         _;
     }
 
@@ -51,30 +55,30 @@ contract KRNL is Ownable {
     function _isAuthorized(
         KrnlPayload memory payload,
         bytes memory functionParams
-    ) private returns (bool) {
+    ) private view returns (bool) {
+        
         (
-            bytes memory kernelResponesSignature,
-            bytes32 kernelParamsDigest,
+            bytes memory kernelResponseSignature,
+            bytes32 kernelParamObjectDigest,
             bytes memory signatureToken,
-            bytes32 nonce,
+            uint256 nonce,
             bool finalOpinion
-        ) = abi.decode(payload.auth, (bytes, bytes32, bytes, bytes32, bool));
+        ) = abi.decode(
+                payload.auth,
+                (bytes, bytes32, bytes, uint256, bool)
+            );
 
-        if (!finalOpinion) {
+        if (finalOpinion == false) {
             revert("Final opinion reverted");
         }
 
-        if (executed[signatureToken]) {
-            return false;
-        }
-
         bytes32 kernelResponsesDigest = keccak256(
-            abi.encode(payload.kernelResponses, msg.sender)
+            abi.encodePacked(payload.kernelResponses, msg.sender)
         );
-        
+
         address recoveredAddress = ECDSA.recover(
             kernelResponsesDigest,
-            kernelResponesSignature
+            kernelResponseSignature
         );
 
         if (recoveredAddress != tokenAuthorityPublicKey) {
@@ -82,19 +86,19 @@ contract KRNL is Ownable {
         }
 
         bytes32 _kernelParamsDigest = keccak256(
-            abi.encode(payload.kernelParams, msg.sender)
+            abi.encodePacked(payload.kernelParams, msg.sender)
         );
 
-        if (_kernelParamsDigest != kernelParamsDigest) {
+        bytes32 functionParamsDigest = keccak256(functionParams);
+
+        if (_kernelParamsDigest != kernelParamObjectDigest) {
             revert("Invalid kernel params digest");
         }
 
-        bytes32 functionParamsDigest = keccak256(abi.encode(functionParams));
-
         bytes32 dataDigest = keccak256(
-            abi.encode(
+            abi.encodePacked(
                 functionParamsDigest,
-                kernelParamsDigest,
+                kernelParamObjectDigest,
                 msg.sender,
                 nonce,
                 finalOpinion
@@ -106,7 +110,7 @@ contract KRNL is Ownable {
             revert("Invalid signature for function call");
         }
 
-        executed[signatureToken] = true;
+        // executed[signatureToken] = true;
         return true;
     }
 }
