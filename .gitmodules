@@ -4,3 +4,6 @@
 [submodule "smart-contracts/foundry/lib/openzeppelin-contracts"]
 	path = smart-contracts/foundry/lib/openzeppelin-contracts
 	url = https://github.com/openZeppelin/openzeppelin-contracts
+[submodule "smart-contracts/foundry/lib/sapphire-paratime"]
+	path = smart-contracts/foundry/lib/sapphire-paratime
+	url = https://github.com/oasisprotocol/sapphire-paratime
