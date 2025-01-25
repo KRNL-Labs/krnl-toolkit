@@ -1,6 +1,22 @@
 [profile.default]
 src = "src"
 out = "out"
-libs = ["lib"]
+libs = ["lib", "dependencies"]
+solc_version = "0.8.24"
+optimizer_runs = 200
+via_ir = true
+remappings = [
+    '@oasisprotocol/sapphire-contracts-v0.2.11/=dependencies/@oasisprotocol-sapphire-contracts-v0.2.11/',
+    '@oasisprotocol/sapphire-contracts/=dependencies/@oasisprotocol-sapphire-contracts-v0.2.11/contracts',
+    '@openzeppelin-contracts-5.2.0/=dependencies/@openzeppelin-contracts-5.2.0/',
+    '@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.2.0/',
+    'forge-std-1.9.5/=dependencies/forge-std-1.9.5/',
+    'forge-std/=dependencies/forge-std-1.9.5/src',
+]
+
+[dependencies]
+forge-std = "1.9.5"
+"@openzeppelin-contracts" = "5.2.0"
+"@oasisprotocol/sapphire-contracts" = { version = "v0.2.11", git = "https://github.com/oasisprotocol/sapphire-paratime.git", rev = "3065e050e9859079e26029c442bb4cc436d5aad0" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
