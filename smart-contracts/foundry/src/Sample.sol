@@ -14,18 +14,14 @@ contract Sample is KRNL {
     event Broadcast(address sender, uint256 score, string message);
 
     // Protected function
-    function protectedFunction(
-        KrnlPayload memory krnlPayload,
-        string memory input
-    )
+    function protectedFunction(KrnlPayload memory krnlPayload, string memory input)
         external
         onlyAuthorized(krnlPayload, abi.encode(input))
     {
-        
         // Decode response from kernel
         KernelResponse[] memory kernelResponses = abi.decode(krnlPayload.kernelResponses, (KernelResponse[]));
         uint256 score;
-        for (uint i; i < kernelResponses.length; i ++) {
+        for (uint256 i; i < kernelResponses.length; i++) {
             if (kernelResponses[i].kernelId == 337) {
                 score = abi.decode(kernelResponses[i].result, (uint256));
             }
