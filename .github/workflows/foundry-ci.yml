@@ -25,7 +25,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd smart-contracts/foundry/ && forge install
+          cd smart-contracts/foundry/ && forge soldeer install
 
       - name: Show Forge version
         run: |
