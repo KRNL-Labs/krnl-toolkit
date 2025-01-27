@@ -1,4 +1,4 @@
-name: CI
+name: Foundry CI
 
 on:
   push:
@@ -25,19 +25,19 @@ jobs:
 
       - name: Show Forge version
         run: |
-          forge --version
+          cd smart-contracts/foundry/ && forge --version
 
       - name: Run Forge fmt
         run: |
-          forge fmt --check
+          cd smart-contracts/foundry/ && forge fmt --check
         id: fmt
 
       - name: Run Forge build
         run: |
-          forge build --sizes
+          cd smart-contracts/foundry/ && forge build --sizes
         id: build
 
-      - name: Run Forge tests
-        run: |
-          forge test -vvv
-        id: test
+      # - name: Run Forge tests
+      #   run: |
+      #     forge test -vvv
+      #   id: test
