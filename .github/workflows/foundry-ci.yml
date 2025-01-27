@@ -31,7 +31,7 @@ jobs:
   
       - name: Install dependencies
         shell: bash
-        run: cd smart-contracts/foundry/ yarn install --frozen-lockfile
+        run: cd smart-contracts/foundry/ npm install --frozen-lockfile
 
       - name: Show Forge version
         run: |
