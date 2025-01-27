@@ -1,3 +1,0 @@
-@@oasisprotocol/sapphire-contracts-latest/=dependencies/@@oasisprotocol-sapphire-contracts-latest/
-@openzeppelin-contracts-5.2.0/=dependencies/@openzeppelin-contracts-5.2.0/
-forge-std-1.9.5/=dependencies/forge-std-1.9.5/
