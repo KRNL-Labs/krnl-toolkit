@@ -14,5 +14,5 @@ docs/
 .env
 
 
-# Soldeer
-/dependencies
+# node modules
+/node_modules
