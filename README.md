@@ -1,4 +1,4 @@
 # 10-minutes-tutorial
 
 
-## You may use either Hardhat or Remix to deploy contracts
+## You may use Foundry, Hardhat or Remix to deploy contracts
