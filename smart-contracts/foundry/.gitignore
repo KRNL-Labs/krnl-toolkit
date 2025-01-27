@@ -16,3 +16,6 @@ docs/
 
 # node modules
 /node_modules
+
+# Soldeer
+/dependencies
