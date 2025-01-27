@@ -23,15 +23,9 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          # cache: 'yarn'
-  
-      - name: Install dependencies
-        shell: bash
-        run: cd smart-contracts/foundry/ npm install
+      - name: Install Dependencies
+        run: |
+          cd smart-contracts/foundry/ && forge soldeer install
 
       - name: Show Forge version
         run: |
