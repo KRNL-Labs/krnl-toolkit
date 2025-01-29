@@ -1,0 +1,49 @@
+name: Foundry CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  check:
+    strategy:
+      fail-fast: true
+
+    name: Foundry project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Install Dependencies
+        run: |
+          cd smart-contracts/foundry/ && forge soldeer install
+
+      - name: Show Forge version
+        run: |
+          cd smart-contracts/foundry/ && forge --version
+
+      - name: Run Forge fmt
+        run: |
+          cd smart-contracts/foundry/ && forge fmt --check
+        id: fmt
+
+      - name: Run Forge build
+        run: |
+          cd smart-contracts/foundry/ && forge build --sizes
+        id: build
+
+      # - name: Run Forge tests
+      #   run: |
+      #     forge test -vvv
+      #   id: test
