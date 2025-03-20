@@ -6,7 +6,26 @@ import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@oasisprotocol/sapphire-contracts/contracts/Sapphire.sol";
 import "@oasisprotocol/sapphire-contracts/contracts/EthereumUtils.sol";
-
+// ===============================
+// Step 1
+// This TA contract is specifically built to be compatible with kernel ID 337 as an example.
+// If you are using this source code as a project template, make sure you change the following lines.
+// Line 57
+// Line 58
+// Line 59
+// ===============================
+// Step 2
+// The decoding part from this TA contract is for comparing the responses from kernel(s).
+// You would have to modify the data type to match your selected kernel(s).
+// Line 106
+// Line 108
+// ===============================
+// Step 3
+// TA also checks the node whitelist and runtime digest of the node.
+// If you intend to use RPC endpoints other than version “https://v0-0-1-rpc.node.lat”, please ensure that you update the following lines accordingly.
+// Line 63
+// Line 65
+// ===============================
 contract TokenAuthority is Ownable {
     Keypair private signingKeypair;
     Keypair private accessKeypair;
@@ -34,9 +53,15 @@ contract TokenAuthority is Ownable {
         signingKeypair = _generateKey();
         accessKeypair = _generateKey();
         
+        // Set allowed kernel(s)
+        // kernels[REPLACE_WITH_KERNEL_ID] = true;
+        // kernels[REPLACE_WITH_KERNEL_ID] = true;
+        // kernels[REPLACE_WITH_KERNEL_ID] = true;
         kernels[337] = true;
 
+        // Set node whitelist
         whitelist[address(0xc770EAc29244C1F88E14a61a6B99d184bfAe93f5)] = true;
+        // Set runtime digest
         runtimeDigests[
             0x876924e18dd46dd3cbcad570a87137bbd828a7d0f3cad309f78ad2c9402eeeb7
         ] = true;
@@ -77,7 +102,9 @@ contract TokenAuthority is Ownable {
         );
 
         for (uint256 i = 0; i < _executions.length; i++) {
+            // Change the line below to match with your selected kernel(s)
             if (_executions[i].kernelId == 337) {
+                // Change the code below to match with the return data type of this kernel
                 uint256 result = abi.decode(_executions[i].result, (uint256));
                 if (result > 0) {
                     _executions[i].isValidated = true;
@@ -87,7 +114,20 @@ contract TokenAuthority is Ownable {
                     _executions[i].opinion = false;
                 }
             }
-
+            // ===============================
+            // If you have more than 1 kernel, you can add more conditions
+            // if (_executions[i].kernelId == REPLACE_WITH_KERNEL_ID) {
+            //     // Change the code below to match with the return data type of this kernel
+            //     bool foo = abi.decode(_executions[i].result, (bool));
+            //     if (foo == true) {
+            //         _executions[i].isValidated = true;
+            //         _executions[i].opinion = true;
+            //     } else {
+            //         _executions[i].isValidated = false;
+            //         _executions[i].opinion = false;
+            //     }
+            // }
+            // ===============================
         }
         
         return abi.encode(_executions);
