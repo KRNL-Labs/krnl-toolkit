@@ -64,12 +64,6 @@ contract Sample is KRNL {
 // No event is emitted during the transaction.
 // ===============================
 
-// // SPDX-License-Identifier: UNLICENSED
-// pragma solidity ^0.8.24;
-
-// import {KRNL, KrnlPayload, KernelParameter, KernelResponse} from "./KRNL.sol";
-
-
 // contract Sample is KRNL {
 //     constructor(address _tokenAuthorityPublicKey) KRNL(_tokenAuthorityPublicKey) {}
 
