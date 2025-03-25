@@ -31,13 +31,13 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY
   },
-  // sourcify: {
-  //   enabled: true
+  sourcify: {
+    enabled: true
   //   // Optional: specify a different Sourcify server
   //   // apiUrl: "https://sourcify.dev/server",
   //   // Optional: specify a different Sourcify repository
   //   // browserUrl: "https://repo.sourcify.dev",
-  // }
+  }
 }
 
 export default config;
