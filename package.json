@@ -9,6 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "hh": "npm install --workspace=hardhat",
     "deploy": "npm run deploy --workspace=hardhat",
-    "register": "npm run register --workspace=hardhat"
+    "register": "npm run register --workspace=hardhat",
+    "full-deploy": "npm run dvr --workspace=hardhat"
   }
 }
