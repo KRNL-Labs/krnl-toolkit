@@ -1,13 +1,16 @@
 import { ethers, run } from "hardhat";
-import * as dotenv from "dotenv";
 import * as fs from "fs";
+import * as dotenv from "dotenv";
+import { resolve } from "path";
+
+dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 async function main() {
   const [deployer] = await ethers.getSigners();
   
   const walletAddress = deployer.address;
 
-  const ownerAddress = process.env.INITIAL_OWNER_ADDRESS || walletAddress;
+  const ownerAddress = walletAddress;
 
   console.log("======================================")
   console.log("DEPLOYER:", walletAddress);
@@ -37,7 +40,8 @@ async function main() {
 
 
   // SMART CONTRACT Sample.sol
-  const providerMain = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+  const sepoliaRpc = process.env.INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}` : "https://sepolia.drpc.org";
+  const providerMain = new ethers.JsonRpcProvider(sepoliaRpc);
   const walletMain = new ethers.Wallet(`${process.env.PRIVATE_KEY_SEPOLIA}`, providerMain);
 
   const ContractMain = await ethers.getContractFactory("Sample", walletMain);

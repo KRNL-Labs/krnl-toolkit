@@ -3,8 +3,11 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify"
 
 import * as dotenv from "dotenv";
+import { resolve } from "path";
 
-dotenv.config();
+dotenv.config({ path: resolve(__dirname, "../../.env") });
+
+const sepoliaRpc = process.env.INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}` : "https://sepolia.drpc.org";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -19,7 +22,7 @@ const config: HardhatUserConfig = {
   },
   networks: {
     sepolia: {
-      url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+      url: sepoliaRpc,
       accounts: [`0x${process.env.PRIVATE_KEY_SEPOLIA}`],
     },
     'sapphire-testnet': {

@@ -1,14 +1,19 @@
 import { ethers, run } from "hardhat";
-import * as dotenv from "dotenv";
 import { contractRegistryAbi } from "./abi/contractRegistry";
 import * as fs from "fs";
+import * as dotenv from "dotenv";
+import { resolve } from "path";
+
+dotenv.config({ path: resolve(__dirname, "../../.env") });
+
 async function main() {
   
-  const provider = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+  const sepoliaRpc = process.env.INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}` : "https://sepolia.drpc.org";
+  const provider = new ethers.JsonRpcProvider(sepoliaRpc);
   const wallet = new ethers.Wallet(`${process.env.PRIVATE_KEY_SEPOLIA}`, provider);
   
-  const contractRegistryAddress = process.env.CONTRACT_REGISTRY_ADDRESS || "";
-  const dAppRegistryAddress = process.env.DAPP_REGISTRY_ADDRESS || "";
+  const contractRegistryAddress = "0x901647B1517fD4dBF46B27759aDd59A91CBf0759";
+  const dAppRegistryAddress = "0x6b96E52Cc40136E22eF690bA0C28E521a86AAc4D";
   const kernelIdsFromEnv: any[] = process.env.KERNEL_ID ? process.env.KERNEL_ID.replace(/[\[\]]/g, '').split(',').map(Number) : [];
 
   const deployedContracts = JSON.parse(fs.readFileSync('deployedContracts.json', 'utf-8'));
@@ -99,8 +104,8 @@ async function main() {
   console.log("Registered Smart Contract ID: ", registeredSmartContractId);
   console.log("dApp ID: ", dAppIdResult);
   console.log("Please visit this page for Entry ID, Access Token, and Kernel Payload\n\n", `https://app.platform.lat/dapp/${dAppIdResult}\n`);
-  console.log("Entry ID and Access Token are similar to x-api-key or Bearer Token of Web2")
-  console.log("Kernel Payload is the template of parameter(s) that needs to be sent to kernel ID(s):", kernelIdsFromEnv)
+  console.log("Tips 1: Entry ID and Access Token are similar to x-api-key or Bearer Token of Web2")
+  console.log("Tips 2: Kernel Payload is the template of parameter(s) that needs to be sent to kernel ID(s):", kernelIdsFromEnv)
   console.log("======================================")
 }
 

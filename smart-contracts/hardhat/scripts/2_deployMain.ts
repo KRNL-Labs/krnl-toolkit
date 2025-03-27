@@ -1,13 +1,17 @@
 import { ethers, run } from "hardhat";
-import * as dotenv from "dotenv";
 import * as fs from "fs";
+import * as dotenv from "dotenv";
+import { resolve } from "path";
+
+dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 async function main() {
 
   console.log("START DEPLOYING REGISTERED SMART CONTRACT")
 
   // SMART CONTRACT Sample.sol
-  const providerMain = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+  const sepoliaRpc = process.env.INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}` : "https://sepolia.drpc.org";
+  const providerMain = new ethers.JsonRpcProvider(sepoliaRpc);
   const walletMain = new ethers.Wallet(`${process.env.PRIVATE_KEY_SEPOLIA}`, providerMain);
 
   const jsonRead = JSON.parse(fs.readFileSync('deployedContracts.json', 'utf8'));

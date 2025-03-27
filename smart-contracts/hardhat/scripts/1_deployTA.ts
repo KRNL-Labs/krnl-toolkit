@@ -1,18 +1,21 @@
 import { ethers, run } from "hardhat";
 import { execSync } from 'child_process';
-import * as dotenv from "dotenv";
 import * as fs from "fs";
+import * as dotenv from "dotenv";
+import { resolve } from "path";
+
+dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 async function main() {
   const [deployer] = await ethers.getSigners();
   
   const walletAddress = deployer.address;
 
-  const ownerAddress = process.env.INITIAL_OWNER_ADDRESS || walletAddress;
+  const ownerAddress = walletAddress;
 
   console.log("======================================\n")
-  console.log("Warning messages may appear on the terminal\n")
-  console.log("Especially after verifying the Token Authority\n")
+  console.log("WARNING MESSAGES MAY APPEAR ON THE TERMINAL\n")
+  console.log("Especially after verifying the Token Authority on Sourcify\n")
   console.log("======================================")
   await new Promise(r => setTimeout(r, 3000));
   console.log("DEPLOYER:", walletAddress);
