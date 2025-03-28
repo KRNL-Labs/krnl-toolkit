@@ -10,7 +10,7 @@
     "deploy-ta": "hardhat clean && hardhat compile && hardhat run scripts/1_deployTA.ts --network sapphire-testnet",
     "deploy-main": "hardhat clean && hardhat compile && hardhat run scripts/2_deployMain.ts --network sepolia",
     "register": "hardhat run scripts/3_platformRegister.ts",
-    "dvr": "npm run cnc &&npm run deploy-ta && npm run deploy-main && npm run register"
+    "dvr": "npm run cnc && npm run deploy-ta && npm run deploy-main && npm run register"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +23,7 @@
     "hardhat": "^2.22.14"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "hardhat-ignore-warnings": "^0.2.12"
   }
 }
