@@ -1,11 +1,16 @@
 {
   "name": "hardhat",
   "version": "1.0.0",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cnc": "hardhat clean && hardhat compile",
-    "deploy": "hardhat clean && hardhat compile && hardhat run scripts/deploy.ts --network sepolia"
+    "deploy": "hardhat clean && hardhat compile && hardhat run scripts/deployNoRegister.ts --network sepolia",
+    "deploy-ta": "hardhat clean && hardhat compile && hardhat run scripts/1_deployTA.ts --network sapphire-testnet",
+    "deploy-main": "hardhat clean && hardhat compile && hardhat run scripts/2_deployMain.ts --network sepolia",
+    "register": "hardhat run scripts/3_platformRegister.ts",
+    "dvr": "npm run cnc && npm run deploy-ta && npm run deploy-main && npm run register"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +23,7 @@
     "hardhat": "^2.22.14"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "hardhat-ignore-warnings": "^0.2.12"
   }
 }

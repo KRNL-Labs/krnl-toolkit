@@ -10,8 +10,10 @@ npm install
 
 ## 2. Fill .env
 
-## 3. Deploy
+## 3. Deploy all contracts, verify, and register through KRNL Platform
 
 ```shell
-npm run deploy
+npm run dvr
 ```
+
+

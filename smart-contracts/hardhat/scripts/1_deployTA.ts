@@ -1,14 +1,23 @@
 import { ethers, run } from "hardhat";
+import { execSync } from 'child_process';
+import * as fs from "fs";
 import * as dotenv from "dotenv";
+import { resolve } from "path";
+
+dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 async function main() {
   const [deployer] = await ethers.getSigners();
   
   const walletAddress = deployer.address;
 
-  const ownerAddress = process.env.INITIAL_OWNER_ADDRESS || walletAddress;
+  const ownerAddress = walletAddress;
 
+  console.log("======================================\n")
+  console.log("WARNING MESSAGES MAY APPEAR ON THE TERMINAL\n")
+  console.log("Especially after verifying the Token Authority on Sourcify\n")
   console.log("======================================")
+  await new Promise(r => setTimeout(r, 3000));
   console.log("DEPLOYER:", walletAddress);
   console.log("Owner address for OM and TA:", ownerAddress)
   console.log("======================================")
@@ -32,37 +41,45 @@ async function main() {
   console.log("Token Authority Public Key in hash value:",TAPublicKeyHash)
   console.log("Token Authority Public Key in address value:", TAPublicKeyAddress)
   console.log("======================================")
-
-
-
-  // SMART CONTRACT Sample.sol
-  const providerMain = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-  const walletMain = new ethers.Wallet(`${process.env.PRIVATE_KEY_SEPOLIA}`, providerMain);
-
-  const ContractMain = await ethers.getContractFactory("Sample", walletMain);
-  const contractMain = await ContractMain.deploy(TAPublicKeyAddress);
-  const addressMain = contractMain.target;
-  console.log("Contract deployed to:", addressMain);
-  //   console.log("Contract: ", contractMain)
-
   
   // VERIFYING PART
   await new Promise(r => setTimeout(r, 60000));
   try {
-      console.log("TRY VERIFYING CONTRACT");
-      await run("verify:verify", {
-          address: addressMain,
-          constructorArguments: [TAPublicKeyAddress],
-        });
-        console.log(`CONTRACT: ${addressMain} IS VERIFIED ON ETHERSCAN`);
-    } catch (error: any) {
-        console.error("VERIFY FAILED WITH ERROR:", error.message);
-    }
+    const command = `npx hardhat verify --network sapphire-testnet ${addressTokenAuthority} ${ownerAddress}`;
+    console.log(`Running command: ${command}`);
+    execSync(command, { stdio: 'inherit' });
+  } catch (error: any) {
+    console.error('Error during verification:', error.message);
+  }
 
+  // JSON
+  let jsonRead = {
+    tokenAuthorityAddress: "",
+    tokenAuthorityPublicKey: "",
+    registeredSmartContractAddress: ""
+  };
+  try {
+    const fileContent = fs.readFileSync('deployedContracts.json', 'utf-8');
+    if (fileContent.trim() !== '') {
+      jsonRead = JSON.parse(fileContent);
+    }
+  } catch (error) {
+    console.error("Error reading deployedContracts.json:", error);
+  }
+  
+  const data = jsonRead;
+  
+  data.tokenAuthorityAddress = addressTokenAuthority.toString();
+  data.tokenAuthorityPublicKey = TAPublicKeyAddress.toString();
+  
+  const updatedJsonString = JSON.stringify(data, null, 2);
+  
+  fs.writeFileSync('deployedContracts.json', updatedJsonString, 'utf-8');
+  
   // SUMMARY
-  console.log("=====SUMMARY=====")
+  console.log("=====END OF TOKEN AUTHORITY DEPLOYMENT=====")
   console.log("\nToken Authority - Oasis Sapphire testnet\nAddress:", addressTokenAuthority)
-  console.log("\nRegistered Smart Contract - Sepolia\nAddress:", addressMain)
+  console.log("\nYou may see warning or error messages, make sure to recheck with Sourcify after verified")
   console.log("=================")
 }
 
