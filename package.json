@@ -15,7 +15,7 @@
     "hmain": "npm run deploy-main --workspace=hardhat",
     "hregister": "npm run register --workspace=hardhat",
     "hdvr": "npm run setup-env && npm run dvr --workspace=hardhat",
-    "hdeploy-all": "npm run deploy-all --workspace=hardhat"
+    "hdeploy-all": "npm run setup-env && npm run deploy-all --workspace=hardhat"
   },
   "dependencies": {
     "chalk": "^4.1.2",
