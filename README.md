@@ -1,12 +1,9 @@
-# 10-minutes-tutorial
+# KRNL Toolkit
 
 
 ## You may use either Hardhat or Remix to deploy contracts
 
 ### For other smart contract development framworks, use the hyperlink below
-
-Smart contract template folder [click here](https://github.com/KRNL-Labs/10-minute-tutorial/tree/main/smart-contracts/hardhat/contracts)
-
 
 # Hardhat
 
@@ -81,3 +78,4 @@ npm run hcnc
 
 This command will clean and compile the smart contracts.
 
+Smart contract template folder [click here](https://github.com/KRNL-Labs/krnl-toolkit/tree/main/smart-contracts/hardhat/contracts)

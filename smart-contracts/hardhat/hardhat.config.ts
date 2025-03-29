@@ -1,9 +1,21 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "@nomicfoundation/hardhat-verify"
+import "@nomicfoundation/hardhat-verify";
+import "hardhat-ignore-warnings";
 
 import * as dotenv from "dotenv";
 import { resolve } from "path";
+
+// Type declaration for the warnings property added by hardhat-ignore-warnings
+declare module "hardhat/types" {
+  interface HardhatUserConfig {
+    warnings?: 'off' | 'error' | 'warn' | boolean | {
+      [filePattern: string]: 'off' | 'error' | 'warn' | boolean | {
+        [warningCode: string]: 'off' | 'error' | 'warn' | boolean;
+      };
+    };
+  }
+}
 
 dotenv.config({ path: resolve(__dirname, "../../.env") });
 
@@ -23,17 +35,32 @@ const config: HardhatUserConfig = {
   networks: {
     sepolia: {
       url: sepoliaRpc,
+      chainId: 11155111,
       accounts: [`0x${process.env.PRIVATE_KEY_SEPOLIA}`],
     },
-    'sapphire-testnet': {
+    "sapphire-testnet": {
       url: `https://testnet.sapphire.oasis.io`,
       chainId: 23295,
       accounts: [`0x${process.env.PRIVATE_KEY_OASIS}`],
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
+    apiKey: {
+      sepolia: process.env.ETHERSCAN_API_KEY || "",
+      "sapphire-testnet": process.env.ETHERSCAN_API_KEY || ""
+    },
+    customChains: [
+      {
+        network: "sapphire-testnet",
+        chainId: 23295,
+        urls: {
+          apiURL: "https://api-sapphire.oasis.io",
+          browserURL: "https://sapphire.oasis.io"
+        }
+      }
+    ]
   },
+  warnings: 'off',
   sourcify: {
     enabled: true
   //   // Optional: specify a different Sourcify server
