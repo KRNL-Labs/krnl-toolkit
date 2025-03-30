@@ -11,7 +11,7 @@
     "deploy-main": "hardhat clean && hardhat compile && hardhat run scripts/2_deployMain.ts --network sepolia",
     "register": "hardhat run scripts/3_platformRegister.ts",
     "dvr": "npm run deploy-ta && npm run deploy-main && npm run register",
-    "deploy-all": "hardhat clean && hardhat compile && hardhat run scripts/main.ts"
+    "deploy-all": "hardhat clean && hardhat run scripts/main.ts"
   },
   "author": "",
   "license": "ISC",

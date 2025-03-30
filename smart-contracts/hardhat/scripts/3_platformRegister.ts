@@ -8,7 +8,7 @@ import chalk from "chalk";
 dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 // Brand colors
-const BRAND_BLUE = '#0000FF';
+const BRAND_BLUE = '#0096FF';
 
 // Create custom branded chalk styles
 const brandBlue = chalk.hex(BRAND_BLUE);
@@ -83,12 +83,12 @@ export async function registerPlatform(skipHeader = false) {
   const tokenAuthorityAddress = deployedContracts.tokenAuthorityAddress;
 
   // REGISTER SMART CONTRACT
-  console.log(brandHighlight(' REGISTERING SMART CONTRACT '));
+  console.log(brandHighlight(' 3.1) REGISTERING SMART CONTRACT '));
   console.log();
   
-  console.log(brandBlue('   Smart Contract Address: ') + chalk.white(registeredSmartContractAddress));
-  console.log(brandBlue('   Token Authority Address: ') + chalk.white(tokenAuthorityAddress));
-  console.log(brandBlue('   Kernel ID(s): ') + chalk.white(kernelIdsFromEnv.join(', ')));
+  console.log(brandBlue('  ↳ Smart Contract Address: ') + chalk.white(registeredSmartContractAddress));
+  console.log(brandBlue('  ↳ Token Authority Address: ') + chalk.white(tokenAuthorityAddress));
+  console.log(brandBlue('  ↳ Kernel ID(s): ') + chalk.white(kernelIdsFromEnv.join(', ')));
   console.log();
   
   const smartContractRegistryContract: any = new ethers.Contract(contractRegistryAddress, contractRegistryAbi, wallet);
@@ -124,8 +124,7 @@ export async function registerPlatform(skipHeader = false) {
     clearInterval(registerSpin);
     process.stdout.write('\r' + ' '.repeat(100) + '\r');
     console.log(brandBlue('✓ ') + chalk.green('SMART CONTRACT REGISTRATION SUCCESSFUL'));
-    console.log();
-    console.log(brandBlue('   Smart Contract ID: ') + chalk.white(registeredSmartContractId));
+    console.log(brandBlue('  ↳ Smart Contract ID: ') + chalk.white(registeredSmartContractId));
   } catch (error) {
     clearInterval(registerSpin);
     process.stdout.write('\r' + ' '.repeat(100) + '\r');
@@ -135,9 +134,7 @@ export async function registerPlatform(skipHeader = false) {
   console.log();
 
   // REGISTER DAPP
-  console.log(brandHighlight(' REGISTERING DAPP '));
-  console.log();
-  console.log(brandBlue('   Using Smart Contract ID: ') + chalk.white(registeredSmartContractId));
+  console.log(brandHighlight(' 3.2) REGISTERING DAPP '));
   console.log();
   
   const dAppFunctionSelector = "0x5e920169";
@@ -178,8 +175,7 @@ export async function registerPlatform(skipHeader = false) {
       clearInterval(dappSpin);
       process.stdout.write('\r' + ' '.repeat(100) + '\r');
       console.log(brandBlue('✓ ') + chalk.green('DAPP REGISTRATION SUCCESSFUL'));
-      console.log();
-      console.log(brandBlue('   dApp ID: ') + chalk.white(dAppIdResult));
+      console.log(brandBlue('  ↳ dApp ID: ') + chalk.white(dAppIdResult));
     } else {
       clearInterval(dappSpin);
       process.stdout.write('\r' + ' '.repeat(100) + '\r');

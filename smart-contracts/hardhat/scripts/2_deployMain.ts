@@ -7,7 +7,7 @@ import chalk from "chalk";
 dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 // Brand colors
-const BRAND_BLUE = '#0000FF';
+const BRAND_BLUE = '#0096FF';
 
 // Create custom branded chalk styles
 const brandBlue = chalk.hex(BRAND_BLUE);
@@ -35,9 +35,6 @@ export async function deployMainContract(skipHeader = false) {
     console.log(brandHeader('  ╚═══════════════════════════════════════════════════════╝  '));
     console.log();
   }
-
-  console.log(brandHighlight(' DEPLOYING REGISTERED SMART CONTRACT '));
-  console.log();
 
   // SMART CONTRACT Sample.sol
   const sepoliaRpc = process.env.INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}` : "https://sepolia.drpc.org";
@@ -71,7 +68,6 @@ export async function deployMainContract(skipHeader = false) {
     clearInterval(deploySpin);
     process.stdout.write('\r' + ' '.repeat(100) + '\r');
     console.log(brandBlue('✓ ') + chalk.green('DEPLOYMENT INFORMATION LOADED'));
-    console.log();
   } catch (error) {
     clearInterval(deploySpin);
     process.stdout.write('\r' + ' '.repeat(100) + '\r');
@@ -80,7 +76,10 @@ export async function deployMainContract(skipHeader = false) {
   }
 
   const TAPublicKeyAddress = jsonRead.tokenAuthorityPublicKey;
-  console.log(brandBlue('   Token Authority Public Key: ') + chalk.white(TAPublicKeyAddress));
+  console.log(brandBlue('  ↳ Token Authority Public Key: ') + chalk.white(TAPublicKeyAddress));
+  console.log();
+
+  console.log(brandHighlight(' 2.1) DEPLOYING REGISTERED SMART CONTRACT '));
   console.log();
 
   deploySpin = startSpinner('Deploying main contract to Sepolia...');
@@ -91,12 +90,11 @@ export async function deployMainContract(skipHeader = false) {
   
   const addressMain = contractMain.target;
   console.log(brandBlue('✓ ') + chalk.green('MAIN CONTRACT DEPLOYED SUCCESSFULLY'));
-  console.log();
-  console.log(brandBlue('  Contract address: ') + chalk.white(addressMain.toString()));
+  console.log(brandBlue('  ↳ Contract address: ') + chalk.white(addressMain.toString()));
   console.log();
   
   // VERIFYING PART
-  console.log(brandHighlight(' VERIFYING CONTRACT ON ETHERSCAN '));
+  console.log(brandHighlight(' 2.2) VERIFYING CONTRACT ON ETHERSCAN '));
   console.log();
   
   let verifySpin = startSpinner('Starting verification process (this may take up to 60 seconds)...');
@@ -120,7 +118,7 @@ export async function deployMainContract(skipHeader = false) {
   console.log();
 
   // JSON SAVING
-  console.log(brandHighlight(' SAVING DEPLOYMENT INFORMATION '));
+  console.log(brandHighlight(' 2.3) SAVING DEPLOYMENT INFORMATION '));
   console.log();
   
   let saveSpin = startSpinner('Updating deployment information...');
@@ -135,8 +133,7 @@ export async function deployMainContract(skipHeader = false) {
   clearInterval(saveSpin);
   process.stdout.write('\r' + ' '.repeat(100) + '\r');
   console.log(brandBlue('✓ ') + chalk.green('DEPLOYMENT INFORMATION UPDATED SUCCESSFULLY'));
-  console.log();
-  console.log(brandBlue('  ') + 'File: ' + chalk.white('  deployedContracts.json'));
+  console.log(brandBlue('  ') + '↳ File: ' + chalk.white('deployedContracts.json'));
   console.log();
 
   // SUMMARY

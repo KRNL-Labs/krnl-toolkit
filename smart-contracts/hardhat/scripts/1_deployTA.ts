@@ -6,7 +6,7 @@ import { resolve } from "path";
 import chalk from "chalk";
 
 // Brand colors
-const BRAND_BLUE = '#0000FF';
+const BRAND_BLUE = '#0096FF';
 
 // Create custom branded chalk styles
 const brandBlue = chalk.hex(BRAND_BLUE);
@@ -74,7 +74,7 @@ export async function deployTokenAuthority(skipHeader = false) {
   console.log();
 
   // TOKEN AUTHORITY Deployment
-  console.log(brandHighlight(' DEPLOYING TOKEN AUTHORITY '));
+  console.log(brandHighlight(' 1.1) DEPLOYING TOKEN AUTHORITY '));
   console.log();
   
   const providerTokenAuthority = new ethers.JsonRpcProvider(`https://testnet.sapphire.oasis.io`);
@@ -103,7 +103,7 @@ export async function deployTokenAuthority(skipHeader = false) {
   console.log(brandBlue('✓ ') + chalk.green('TOKEN AUTHORITY DEPLOYED SUCCESSFULLY'));
   
   const addressTokenAuthority = contractTokenAuthority.target;
-  console.log(brandBlue('   Contract address: ') + chalk.white(addressTokenAuthority.toString()));
+  console.log(brandBlue('  ↳ Contract address: ') + chalk.white(addressTokenAuthority.toString()));
   console.log();
   
   let keysSpin = startSpinner('Retrieving public keys...');
@@ -123,7 +123,7 @@ export async function deployTokenAuthority(skipHeader = false) {
   console.log();
   
   // VERIFICATION
-  console.log(brandHighlight(' VERIFYING CONTRACT ON SOURCIFY '));
+  console.log(brandHighlight(' 1.2) VERIFYING CONTRACT ON SOURCIFY '));
   console.log();
   
   const verificationSpin = startSpinner('Starting verification process (this may take up to 60 seconds)...');
@@ -147,12 +147,11 @@ export async function deployTokenAuthority(skipHeader = false) {
     clearSpinner();
     
     console.log(brandBlue('✓ ') + chalk.green('SOURCIFY VERIFICATION COMPLETE'));
-    console.log(brandBlue('  ') + chalk.gray('Successfully verified contract on Sourcify.'));
   }
   console.log();
 
   // JSON SAVING
-  console.log(brandHighlight(' SAVING DEPLOYMENT INFORMATION '));
+  console.log(brandHighlight(' 1.3) SAVING DEPLOYMENT INFORMATION '));
   console.log();
   
   let saveSpin = startSpinner('Saving deployment information...');
@@ -187,7 +186,7 @@ export async function deployTokenAuthority(skipHeader = false) {
   clearInterval(saveSpin);
   clearSpinner();
   console.log(brandBlue('✓ ') + chalk.green('DEPLOYMENT INFORMATION SAVED SUCCESSFULLY'));
-  console.log(brandBlue('  ') + 'File: ' + chalk.white('deployedContracts.json'));
+  console.log(brandBlue('  ') + '↳ File: ' + chalk.white('deployedContracts.json'));
   console.log();
   
   // SUMMARY
@@ -198,7 +197,6 @@ export async function deployTokenAuthority(skipHeader = false) {
   console.log(`Contract:      ${chalk.white('Token Authority')}`);
   console.log(`Address:       ${chalk.white(addressTokenAuthority.toString())}`);
   console.log(`Public Key:    ${chalk.white(TAPublicKeyAddress.toString())}`);
-  console.log();
   console.log(brandBlue('━'.repeat(70)));
   console.log();
   
