@@ -7,7 +7,7 @@ import chalk from "chalk";
 dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 // Brand colors
-const BRAND_BLUE = '#0096FF';
+const BRAND_BLUE = '#001EFE';
 
 // Create custom branded chalk styles
 const brandBlue = chalk.hex(BRAND_BLUE);
