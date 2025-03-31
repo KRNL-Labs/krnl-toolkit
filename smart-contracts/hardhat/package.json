@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cnc": "hardhat clean && hardhat compile",
-    "deploy": "hardhat clean && hardhat compile && hardhat run scripts/deployNoRegister.ts --network sepolia",
     "deploy-ta": "hardhat clean && hardhat compile && hardhat run scripts/1_deployTA.ts --network sapphire-testnet",
     "deploy-main": "hardhat clean && hardhat compile && hardhat run scripts/2_deployMain.ts --network sepolia",
     "register": "hardhat run scripts/3_platformRegister.ts",

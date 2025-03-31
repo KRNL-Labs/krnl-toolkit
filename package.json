@@ -10,12 +10,11 @@
     "setup-env": "node setup-env.js",
     "hh": "npm install --workspace=hardhat",
     "hcnc": "npm run cnc --workspace=hardhat",
-    "hdeploy": "npm run deploy --workspace=hardhat",
     "hta": "npm run deploy-ta --workspace=hardhat",
     "hmain": "npm run deploy-main --workspace=hardhat",
     "hregister": "npm run register --workspace=hardhat",
     "hdvr": "npm run setup-env && npm run dvr --workspace=hardhat",
-    "hdeploy-all": "npm run setup-env && npm run deploy-all --workspace=hardhat"
+    "hdeploy-init": "npm run setup-env && npm run deploy-all --workspace=hardhat"
   },
   "dependencies": {
     "chalk": "^4.1.2",
