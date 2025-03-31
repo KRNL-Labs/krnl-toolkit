@@ -1,2 +1,4 @@
-.env
 node_modules
+.env
+smart-contracts/hardhat/.DS_Store
+smart-contracts/.DS_Store
