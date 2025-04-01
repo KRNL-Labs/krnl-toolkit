@@ -1,9 +1,19 @@
 {
   "name": "krnl-toolkit",
   "version": "0.1.0",
-  "private": true,
+  "description": "KRNL Toolkit for deploying and registering smart contracts across multiple networks",
+  "private": false,
   "workspaces": [
     "smart-contracts/hardhat"
+  ],
+  "bin": {
+    "krnl-cli": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "smart-contracts/hardhat/scripts",
+    "setup-env.js"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,11 +24,34 @@
     "hmain": "npm run deploy-main --workspace=hardhat",
     "hregister": "npm run register --workspace=hardhat",
     "hdvr": "npm run setup-env && npm run dvr --workspace=hardhat",
-    "hdeploy-init": "npm run setup-env && npm run deploy-all --workspace=hardhat"
+    "hdeploy-init": "npm run setup-env && npm run deploy-all --workspace=hardhat",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
+  "keywords": [
+    "blockchain",
+    "smart-contracts",
+    "ethereum",
+    "oasis",
+    "sapphire",
+    "deployment",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
+    "commander": "^11.1.0",
     "dotenv": "^16.4.7",
-    "hardhat": "^2.22.14"
+    "ethers": "^6.13.5",
+    "hardhat": "^2.22.14",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.16"
   }
 }
