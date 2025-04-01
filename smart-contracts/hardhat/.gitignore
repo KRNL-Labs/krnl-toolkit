@@ -17,3 +17,5 @@ node_modules
 ignition/deployments/chain-31337
 
 deployedContracts.json
+kernel-payload.json
+

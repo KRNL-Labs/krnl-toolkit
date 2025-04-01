@@ -7,15 +7,18 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "setup-env": "node setup-env.js",
     "hh": "npm install --workspace=hardhat",
     "hcnc": "npm run cnc --workspace=hardhat",
-    "hdeploy": "npm run deploy --workspace=hardhat",
     "hta": "npm run deploy-ta --workspace=hardhat",
     "hmain": "npm run deploy-main --workspace=hardhat",
     "hregister": "npm run register --workspace=hardhat",
-    "hdvr": "npm run dvr --workspace=hardhat"
+    "hdvr": "npm run setup-env && npm run dvr --workspace=hardhat",
+    "hdeploy-init": "npm run setup-env && npm run deploy-all --workspace=hardhat"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "chalk": "^4.1.2",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.14"
   }
 }

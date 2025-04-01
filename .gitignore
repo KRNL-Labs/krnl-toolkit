@@ -1,2 +1,6 @@
 .env
 node_modules
+smart-contracts/hardhat/kernel-payload.json
+smart-contracts/.DS_Store
+smart-contracts/hardhat/.DS_Store
+.DS_Store
