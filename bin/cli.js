@@ -59,7 +59,7 @@ console.log(chalk.blue(`
 const program = new Command();
 
 program
-  .name('krnl-cli')
+  .name('krnl')
   .description('KRNL Toolkit CLI for deploying and registering smart contracts')
   .version(packageJson.version);
 
@@ -68,7 +68,6 @@ function runHardhatScript(scriptName, args = []) {
   try {
     const scriptPath = path.join(__dirname, '../smart-contracts/hardhat/scripts', scriptName);
     const command = `npx hardhat run ${scriptPath} ${args.join(' ')}`;
-    console.log(chalk.gray(`> ${command}`));
     execSync(command, { stdio: 'inherit', cwd: path.join(__dirname, '../smart-contracts/hardhat') });
     return true;
   } catch (error) {

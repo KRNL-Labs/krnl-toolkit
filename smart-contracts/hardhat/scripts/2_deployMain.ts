@@ -25,16 +25,6 @@ function startSpinner(message: string) {
 }
 
 export async function deployMainContract(skipHeader = false) {
-  if (!skipHeader) {
-    // App logo/header
-    console.log();
-    console.log(brandHeader('  ╔═══════════════════════════════════════════════════════╗  '));
-    console.log(brandHeader('  ║                                                       ║  '));
-    console.log(brandHeader('  ║              MAIN CONTRACT DEPLOYMENT                 ║  '));
-    console.log(brandHeader('  ║                                                       ║  '));
-    console.log(brandHeader('  ╚═══════════════════════════════════════════════════════╝  '));
-    console.log();
-  }
 
   // SMART CONTRACT Sample.sol
   const sepoliaRpc = process.env.INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}` : "https://sepolia.drpc.org";

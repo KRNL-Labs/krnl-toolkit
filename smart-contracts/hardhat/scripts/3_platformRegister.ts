@@ -43,16 +43,6 @@ function startSpinner(message: string) {
 }
 
 export async function registerPlatform(skipHeader = false) {
-  if (!skipHeader) {
-    // App logo/header
-    console.log();
-    console.log(brandHeader('  ╔═══════════════════════════════════════════════════════╗  '));
-    console.log(brandHeader('  ║                                                       ║  '));
-    console.log(brandHeader('  ║              PLATFORM REGISTRATION                    ║  '));
-    console.log(brandHeader('  ║                                                       ║  '));
-    console.log(brandHeader('  ╚═══════════════════════════════════════════════════════╝  '));
-    console.log();
-  }
   
   const sepoliaRpc = process.env.INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}` : "https://1rpc.io/sepolia";
   const provider = new ethers.JsonRpcProvider(sepoliaRpc);

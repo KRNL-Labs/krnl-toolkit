@@ -7,22 +7,25 @@ import chalk from "chalk";
 
 // Brand colors
 const BRAND_BLUE = '#001EFE';
+const BRAND_GREEN = '#00C853';
+const BRAND_YELLOW = '#FFC107';
+const BRAND_RED = '#FF5252';
 
 // Create custom branded chalk styles
 const brandBlue = chalk.hex(BRAND_BLUE);
+const brandGreen = chalk.hex(BRAND_GREEN);
+const brandYellow = chalk.hex(BRAND_YELLOW);
+const brandRed = chalk.hex(BRAND_RED);
 const brandHeader = chalk.hex(BRAND_BLUE).white.bold;
 const brandHighlight = chalk.bold.white.bgHex(BRAND_BLUE);
-const brandRed = chalk.red.bold;
-
-dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 // Helper for loading animation
 function startSpinner(message: string) {
-  const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+  const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
   let i = 0;
   const loader = setInterval(() => {
-    process.stdout.write(`\r${brandBlue(frames[i++ % frames.length])} ${message}`);
-  }, 100);
+    process.stdout.write(`\r${brandBlue(spinnerFrames[i++ % spinnerFrames.length])} ${message}`);
+  }, 80);
   return loader;
 }
 
@@ -31,50 +34,51 @@ function clearSpinner() {
   process.stdout.write('\r' + ' '.repeat(100) + '\r');
 }
 
+// Success, warning and error styling
+function success(message: string) {
+  return `${brandGreen('✓')} ${chalk.green(message)}`;
+}
+
+function warning(message: string) {
+  return `${brandYellow('⚠')} ${chalk.yellow(message)}`;
+}
+
+function error(message: string) {
+  return `${brandRed('✗')} ${chalk.red(message)}`;
+}
+
 export async function deployTokenAuthority(skipHeader = false) {
-  
-  if (!skipHeader) {
-    // App logo/header
-    console.log();
-    console.log(brandHeader('  ╔═══════════════════════════════════════════════════════╗  '));
-    console.log(brandHeader('  ║                                                       ║  '));
-    console.log(brandHeader('  ║                 TOKEN AUTHORITY                       ║  '));
-    console.log(brandHeader('  ║                DEPLOYMENT SYSTEM                      ║  '));
-    console.log(brandHeader('  ║                                                       ║  '));
-    console.log(brandHeader('  ╚═══════════════════════════════════════════════════════╝  '));
-    console.log();
-  }
 
   const [deployer] = await ethers.getSigners();
   const walletAddress = deployer.address;
   const ownerAddress = walletAddress;
 
   if (!skipHeader) {
-    // Warning box
-    console.log(brandBlue('━'.repeat(70)));
-    console.log(brandHeader(' ⚠️  IMPORTANT NOTICE '.padEnd(69) + ' '));
-    console.log(brandBlue('━'.repeat(70)));
-    console.log('Warning messages may appear on the terminal during deployment,');
-    console.log('especially after verifying the Token Authority on Sourcify.');
-    console.log('This is normal and does not indicate deployment failure.');
-    console.log(brandBlue('━'.repeat(70)));
+    // Warning box with fixed styling to ensure proper rendering
+    console.log(brandYellow('╔' + '═'.repeat(68) + '╗'));
+    console.log(brandYellow('║') + ' ⚠️  IMPORTANT NOTICE ' + ' '.repeat(47) + brandYellow('║'));
+    console.log(brandYellow('╠' + '═'.repeat(68) + '╣'));
+    console.log(brandYellow('║') + ' Warning messages may appear on the terminal during deployment,' + ' '.repeat(5) + brandYellow('║'));
+    console.log(brandYellow('║') + ' especially after verifying the Token Authority on Sourcify.' + ' '.repeat(8) + brandYellow('║'));
+    console.log(brandYellow('║') + ' This is normal and does not indicate deployment failure.' + ' '.repeat(11) + brandYellow('║'));
+    console.log(brandYellow('╚' + '═'.repeat(68) + '╝'));
     console.log();
     
     await new Promise(r => setTimeout(r, 2000));
   }
   
-  // Deployment info
-  console.log(brandBlue('┌─ DEPLOYMENT INFORMATION ') + brandBlue('─'.repeat(45)));
+  // Deployment info with box styling
+  console.log(brandBlue('┌─ DEPLOYMENT INFORMATION ' + '─'.repeat(45)));
   console.log(brandBlue('│'));
   console.log(brandBlue('├─► DEPLOYER: ') + chalk.white(walletAddress));
   console.log(brandBlue('│'));
   console.log(brandBlue('├─► OWNER (OM & TA): ') + chalk.white(ownerAddress));
   console.log(brandBlue('│'));
-  console.log(brandBlue('└') + brandBlue('─'.repeat(70)));
+  console.log(brandBlue('└' + '─'.repeat(70)));
   console.log();
 
-  // TOKEN AUTHORITY Deployment
-  console.log(brandHighlight(' 1.1) DEPLOYING TOKEN AUTHORITY '));
+  // TOKEN AUTHORITY Deployment with step indicator
+  console.log(brandHighlight(' STEP 1.1: DEPLOYING TOKEN AUTHORITY '));
   console.log();
   
   const providerTokenAuthority = new ethers.JsonRpcProvider(`https://testnet.sapphire.oasis.io`);
@@ -83,7 +87,7 @@ export async function deployTokenAuthority(skipHeader = false) {
   const balance = await providerTokenAuthority.getBalance(walletTokenAuthority.address);
 
   if (balance < ethers.parseEther("0")) {
-    console.error(brandRed('❌ Insufficient balance, please use Oasis Sapphire faucet at https://faucet.testnet.oasis.dev/'));
+    console.error(error('Insufficient balance, please use Oasis Sapphire faucet at https://faucet.testnet.oasis.dev/'));
     process.exit(1);
   }
 
@@ -100,7 +104,7 @@ export async function deployTokenAuthority(skipHeader = false) {
   clearInterval(deploySpin);
   clearSpinner();
   
-  console.log(brandBlue('✓ ') + chalk.green('TOKEN AUTHORITY DEPLOYED SUCCESSFULLY'));
+  console.log(success('TOKEN AUTHORITY DEPLOYED SUCCESSFULLY'));
   
   const addressTokenAuthority = contractTokenAuthority.target;
   console.log(brandBlue('  ↳ Contract address: ') + chalk.white(addressTokenAuthority.toString()));
@@ -113,15 +117,16 @@ export async function deployTokenAuthority(skipHeader = false) {
   
   const [TAPublicKeyHash, TAPublicKeyAddress] = await contractTokenAuthority.getSigningKeypairPublicKey();
 
-  console.log(brandBlue('┌─ PUBLIC KEY ADDRESS INFORMATION ') + brandBlue('─'.repeat(44)));
+  // Public key info with improved box styling
+  console.log(brandBlue('┌─ PUBLIC KEY ADDRESS INFORMATION ' + '─'.repeat(37)));
   console.log(brandBlue('│'));
   console.log(brandBlue('├─► Address: ') + chalk.white(TAPublicKeyAddress));
   console.log(brandBlue('│'));
-  console.log(brandBlue('└') + brandBlue('─'.repeat(70)));
+  console.log(brandBlue('└' + '─'.repeat(70)));
   console.log();
   
   // VERIFICATION
-  console.log(brandHighlight(' 1.2) VERIFYING CONTRACT ON SOURCIFY '));
+  console.log(brandHighlight(' STEP 1.2: VERIFYING CONTRACT ON SOURCIFY '));
   console.log();
   
   const verificationSpin = startSpinner('Starting verification process (this may take up to 60 seconds)...');
@@ -137,19 +142,19 @@ export async function deployTokenAuthority(skipHeader = false) {
     clearSpinner();
     
     // Display a success message rather than the full verification output
-    console.log(brandBlue('✓ ') + chalk.green('CONTRACT VERIFICATION COMPLETE'));
+    console.log(success('CONTRACT VERIFICATION COMPLETE'));
     console.log(brandBlue('  ') + chalk.gray('Successfully verified contract TokenAuthority on Sourcify.'));
     console.log(brandBlue('  ') + chalk.gray(`https://repo.sourcify.dev/contracts/full_match/23295/${addressTokenAuthority}/`));
   } catch (error) {
     clearInterval(verificationSpin);
     clearSpinner();
     
-    console.log(brandBlue('✓ ') + chalk.green('SOURCIFY VERIFICATION COMPLETE'));
+    console.log(success('SOURCIFY VERIFICATION COMPLETE'));
   }
   console.log();
 
   // JSON SAVING
-  console.log(brandHighlight(' 1.3) SAVING DEPLOYMENT INFORMATION '));
+  console.log(brandHighlight(' STEP 1.3: SAVING DEPLOYMENT INFORMATION '));
   console.log();
   
   let saveSpin = startSpinner('Saving deployment information...');
@@ -168,7 +173,7 @@ export async function deployTokenAuthority(skipHeader = false) {
   } catch (error) {
     clearInterval(saveSpin);
     clearSpinner();
-    console.error(brandBlue('✗ ') + chalk.red('Error reading deployedContracts.json: ') + (error as Error).message);
+    console.error(brandRed('✗ ') + chalk.red('Error reading deployedContracts.json: ') + (error as Error).message);
     console.log(brandBlue('  ') + 'Creating new file...');
   }
   
@@ -183,19 +188,19 @@ export async function deployTokenAuthority(skipHeader = false) {
   
   clearInterval(saveSpin);
   clearSpinner();
-  console.log(brandBlue('✓ ') + chalk.green('DEPLOYMENT INFORMATION SAVED SUCCESSFULLY'));
+  console.log(success('DEPLOYMENT INFORMATION SAVED SUCCESSFULLY'));
   console.log(brandBlue('  ') + '↳ File: ' + chalk.white('deployedContracts.json'));
   console.log();
   
-  // SUMMARY
-  console.log(brandBlue('━'.repeat(70)));
-  console.log(brandHeader(` 📋 DEPLOYMENT SUMMARY `.padEnd(69) + ' '));
-  console.log(brandBlue('━'.repeat(70)));
-  console.log(`Network:       ${chalk.white('Oasis Sapphire testnet')}`);
-  console.log(`Contract:      ${chalk.white('Token Authority')}`);
-  console.log(`Address:       ${chalk.white(addressTokenAuthority.toString())}`);
-  console.log(`Public Address:    ${chalk.white(TAPublicKeyAddress.toString())}`);
-  console.log(brandBlue('━'.repeat(70)));
+  // SUMMARY with improved box styling
+  console.log(brandBlue('┌' + '─'.repeat(68) + '┐'));
+  console.log(brandHeader(' 📋 DEPLOYMENT SUMMARY '.padEnd(67) + ' │'));
+  console.log(brandBlue('├' + '─'.repeat(68) + '┤'));
+  console.log(brandBlue('│ ') + `Network:        ${chalk.white('Oasis Sapphire testnet')}` + ' '.repeat(32) + brandBlue('│'));
+  console.log(brandBlue('│ ') + `Contract:       ${chalk.white('Token Authority')}` + ' '.repeat(39) + brandBlue('│'));
+  console.log(brandBlue('│ ') + `Address:        ${chalk.white(addressTokenAuthority.toString())}` + ' '.repeat(Math.max(0, 30 - addressTokenAuthority.toString().length)) + brandBlue('│'));
+  console.log(brandBlue('│ ') + `Public Address: ${chalk.white(TAPublicKeyAddress.toString())}` + ' '.repeat(Math.max(0, 30 - TAPublicKeyAddress.toString().length)) + brandBlue('│'));
+  console.log(brandBlue('└' + '─'.repeat(68) + '┘'));
   console.log();
   
   return {
@@ -219,7 +224,7 @@ if (require.main === module) {
       process.exit(0);
     })
     .catch((error) => {
-      console.error('\n' + brandBlue('✗ ') + chalk.red('DEPLOYMENT FAILED:'));
+      console.error('\n' + brandRed('✗ ') + chalk.red('DEPLOYMENT FAILED:'));
       console.error(error);
       console.log();
       process.exit(1);

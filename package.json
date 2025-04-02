@@ -7,7 +7,7 @@
     "smart-contracts/hardhat"
   ],
   "bin": {
-    "krnl-cli": "./bin/cli.js"
+    "krnl": "./bin/cli.js"
   },
   "files": [
     "bin",
